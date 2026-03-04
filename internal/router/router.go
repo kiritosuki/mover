@@ -3,6 +3,8 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kiritosuki/mover/internal/handler"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRouter(r *gin.Engine) {
@@ -15,5 +17,11 @@ func SetupRouter(r *gin.Engine) {
 	poiGroup := r.Group("/pois")
 	{
 		poiGroup.GET("", handler.ListPois)
+	}
+
+	// swagger 接口
+	swaggerGroup := r.Group("/swagger")
+	{
+		swaggerGroup.GET("/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 }

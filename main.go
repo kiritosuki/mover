@@ -6,9 +6,12 @@ import (
 	"github.com/kiritosuki/mover/internal/config"
 	"github.com/kiritosuki/mover/internal/database"
 	"github.com/kiritosuki/mover/internal/router"
+	_ "github.com/kiritosuki/mover/swagger-docs"
 	"go.uber.org/zap"
 )
 
+// @title           Mover API
+// @version         1.0
 func main() {
 	// 初始化全局日志对象 Logger
 	Logger.InitLogger()

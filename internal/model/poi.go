@@ -8,7 +8,7 @@ func (poi Poi) TableName() string {
 
 // Poi poi 点
 type Poi struct {
-	Id     uint    `grom:"primaryKey" json:"id"`
+	Id     uint    `gorm:"primaryKey" json:"id"`
 	Name   string  `json:"name"`
 	Tybe   int     `json:"tybe"`
 	Lon    float64 `json:"lon"`
