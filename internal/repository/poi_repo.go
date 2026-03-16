@@ -6,7 +6,7 @@ import (
 	"github.com/kiritosuki/mover/internal/model"
 )
 
-// ListPois 筛选 / 获取 poi 列表
+// ListPois 筛选/获取poi列表
 func ListPois(listPoisReq *dto.ListPoisReq) ([]*model.Poi, error) {
 	// 存放返回结果
 	var pois []*model.Poi
@@ -27,4 +27,15 @@ func ListPois(listPoisReq *dto.ListPoisReq) ([]*model.Poi, error) {
 	// 写入结果
 	err := db.Find(&pois).Error
 	return pois, err
+}
+
+// GetPoi 根据id获取poi
+func GetPoi(id int) (*model.Poi, error) {
+	// 存放返回结果
+	poi := model.Poi{}
+	// 获取数据库连接对象
+	db := database.DB.Model(&model.Poi{})
+	// 根据主键查询
+	err := db.First(&poi, id).Error
+	return &poi, err
 }

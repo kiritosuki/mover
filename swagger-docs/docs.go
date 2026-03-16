@@ -26,7 +26,7 @@ const docTemplate = `{
                 "tags": [
                     "Poi"
                 ],
-                "summary": "筛选 / 获取 poi 列表",
+                "summary": "筛选/获取poi列表",
                 "parameters": [
                     {
                         "type": "string",
@@ -77,6 +77,106 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/pois/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Poi"
+                ],
+                "summary": "根据id获取poi信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "查询id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/result.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Poi"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/result.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/vehicles": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vehicle"
+                ],
+                "summary": "查询/筛选车辆列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "vehicle 状态",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/result.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.Vehicle"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/result.Result"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -100,6 +200,29 @@ const docTemplate = `{
                 },
                 "tybe": {
                     "type": "integer"
+                }
+            }
+        },
+        "model.Vehicle": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "lat": {
+                    "type": "number"
+                },
+                "lon": {
+                    "type": "number"
+                },
+                "speed": {
+                    "type": "number"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "type": "string"
                 }
             }
         },

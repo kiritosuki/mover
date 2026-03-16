@@ -14,6 +14,21 @@ definitions:
       tybe:
         type: integer
     type: object
+  model.Vehicle:
+    properties:
+      id:
+        type: integer
+      lat:
+        type: number
+      lon:
+        type: number
+      speed:
+        type: number
+      status:
+        type: integer
+      updateTime:
+        type: string
+    type: object
   result.Result:
     properties:
       code:
@@ -63,7 +78,66 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/result.Result'
-      summary: 筛选 / 获取 poi 列表
+      summary: 筛选/获取poi列表
       tags:
       - Poi
+  /pois/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 查询id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/result.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Poi'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/result.Result'
+      summary: 根据id获取poi信息
+      tags:
+      - Poi
+  /vehicles:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: vehicle 状态
+        in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/result.Result'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Vehicle'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/result.Result'
+      summary: 查询/筛选车辆列表
+      tags:
+      - Vehicle
 swagger: "2.0"

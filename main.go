@@ -15,7 +15,7 @@ import (
 func main() {
 	// 初始化全局日志对象 Logger
 	Logger.InitLogger()
-	Logger.Logger.Info("全局日志对象 Logger 加载成功")
+	Logger.Logger.Info("全局日志对象Logger加载成功")
 	// 初始化全局 viper 对象并读取配置
 	config.InitViper()
 	// 数据库连接
@@ -44,5 +44,5 @@ func main() {
 		panic(err)
 	}
 
-	Logger.Logger.Info("mover 服务启动成功")
+	Logger.Logger.Info("mover服务启动成功")
 }

@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // DB 数据库连接对象
@@ -33,7 +34,10 @@ func InitDB() {
 
 	// 创建数据库连接对象
 	var err error
-	DB, err = gorm.Open(mysql.Open(dsn))
+	// 第二个参数配置sql日志
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		Logger.Logger.Error("数据库连接失败！", zap.Error(err))
 		panic(err)

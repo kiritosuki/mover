@@ -13,13 +13,21 @@ func SetupRouter(r *gin.Engine) {
 	// 第一个参数拼接剩余请求路径 第二个参数是传递给哪个函数处理请求
 	// 下面 {} 只是为了好看和规范
 
-	// poi 接口
+	// poi接口
 	poiGroup := r.Group("/pois")
 	{
 		poiGroup.GET("", handler.ListPois)
+		poiGroup.GET("/:id", handler.GetPoi)
 	}
 
-	// swagger 接口
+	// vehicle接口
+	vehicleGroup := r.Group("/vehicles")
+	{
+		vehicleGroup.GET("", handler.ListVehicles)
+		//vehicleGroup.GET("/ws", handler.WsListVehicles)
+	}
+
+	// swagger接口
 	swaggerGroup := r.Group("/swagger")
 	{
 		swaggerGroup.GET("/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
