@@ -32,6 +32,14 @@ func main() {
 	// 注册路由
 	router.SetupRouter(r)
 
+	Logger.Logger.Info("mover服务启动成功")
+	Logger.Logger.Info("启动任务创建go程...")
+	go task.CreateOrderTask()
+	Logger.Logger.Info("任务启动 done")
+	Logger.Logger.Info("启动模拟车辆移动go程...")
+	go task.SimulateMoving()
+	Logger.Logger.Info("车辆移动 done")
+
 	// 启动 mover 服务
 	port := config.VP.GetString("server.port")
 	// Run 的参数表示为 ip:port
@@ -44,12 +52,4 @@ func main() {
 		Logger.Logger.Error("服务启动失败！", zap.Error(err))
 		panic(err)
 	}
-
-	Logger.Logger.Info("mover服务启动成功")
-	Logger.Logger.Info("启动任务创建go程...")
-	go task.CreateOrderTask()
-	Logger.Logger.Info("任务启动 done")
-	Logger.Logger.Info("启动模拟车辆移动go程...")
-	go task.SimulateMoving()
-	Logger.Logger.Info("车辆移动 done")
 }
