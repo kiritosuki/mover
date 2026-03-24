@@ -22,6 +22,14 @@ func ListVehicles(status int) ([]*model.Vehicle, error) {
 	return vehicles, err
 }
 
+// GetAllVehicles 获取所有车辆(不区分状态，用于指标统计)
+func GetAllVehicles() ([]*model.Vehicle, error) {
+	var vehicles []*model.Vehicle
+	db := database.DB.Model(&model.Vehicle{})
+	err := db.Find(&vehicles).Error
+	return vehicles, err
+}
+
 // UpdateVehicleLocation 更新车辆位置
 func UpdateVehicleLocation(id int, lon float64, lat float64) error {
 	// 获取数据库连接对象

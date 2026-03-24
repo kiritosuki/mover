@@ -11,4 +11,7 @@ const (
 	// vehicle 的状态
 	VehicleStatusRunning = 1 // 行驶中
 	VehicleStatusFree    = 2 // 空闲中
+
+	// 装卸时间系数：每吨货物的装卸耗时(秒)
+	LoadUnloadTimePerTon = 60.0
 )

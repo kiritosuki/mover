@@ -31,6 +31,14 @@ func UpdateShipmentStatus(id int, status int, oldStatus int) error {
 	return db.Error
 }
 
+// GetAllShipments 获取所有订单(用于指标统计)
+func GetAllShipments() ([]*model.Shipment, error) {
+	var shipments []*model.Shipment
+	db := database.DB.Model(&model.Shipment{})
+	err := db.Find(&shipments).Error
+	return shipments, err
+}
+
 // GetShipment 根据id查询shipment
 func GetShipment(id int) (*model.Shipment, error) {
 	// 存放返回结果

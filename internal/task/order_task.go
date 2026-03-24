@@ -59,8 +59,6 @@ func doCreateOrderTask(shipment *model.Shipment, wg *sync.WaitGroup) {
 		return
 	}
 	// 获取终点poi
-	// TODO 这里代码报错是因为go中变量获取后就必须要使用 这里下面计算cost可能会用所以就留这里了
-	// TODO 你们写代码用了之后把这两行TODO删掉就行
 	endPoi, err := repository.GetPoi(int(shipment.EndPoiId))
 	if err != nil {
 		Logger.Logger.Error("查询终点POI失败")
@@ -72,28 +70,24 @@ func doCreateOrderTask(shipment *model.Shipment, wg *sync.WaitGroup) {
 		Logger.Logger.Warn("没有可用车辆")
 		return
 	}
-	// 选最优车辆
+
+	// 构建调度上下文(全局数据查询一次，循环中复用)
+	dispatchCtx := NewDispatchContext(vehicles)
+
+	// 选最优车辆：遍历候选车辆，通过前置校验(容量/类型)后计算 cost，取最小值
 	var bestVehicle *model.Vehicle
 	bestCost := float64(1<<63 - 1)
 
 	for _, v := range vehicles {
-
-		// TODO 这里做 cost 计算 替换成真实做法
-		// TODO 除了 cost 计算 还应当先考虑车剩余容量和车辆类型(普通/危化品) 这里一起计算
-		// TODO 装货卸货的逻辑我有实现 但是这是在车辆到达原材料地之后的逻辑
-		// TODO 也就是这里创建任务是前置逻辑 要在这里完成货物类型和容量的判断 才能保证后续程序正常运行
-		// TODO 相关的状态常量信息都在 mover/internal/constant 里
-		// 写的时候尽量不在代码中出现魔法值吧 都放constant里
-		// TODO 或许你可能要用到 mover/internal/task/route.go 中的路径规划
-		// 这里我不太确定 路径规划调用放到后面了 但不建议在循环里连续调用
-		// api限额是每秒只能调用10次 这里开了go程 又并发循环调用 一定会超额的
-		// TODO 你可以单独创建新文件在 mover/internal/task/cost.go 中写cost计算的函数
-		// 函数计算需要用到的参数我也不确定有哪些 可能需要先做上周的数据统计部分 计算参数
-		// 这里用参数来计算cost
-		// 建议两个人写 一个人写数据统计部分 一个人写cost计算部分
-
-		cost := 0.0
-
+		// EvaluateVehicle 内部完成了:
+		// 1. 货物类型校验(普通/危化品匹配)
+		// 2. 车辆剩余容量校验
+		// 3. cost 代价计算(综合考虑等待时间、空驶里程、运货效率、平台运能、风险)
+		cost, ok := dispatchCtx.EvaluateVehicle(v, shipment, startPoi, endPoi)
+		if !ok {
+			// 未通过前置校验(类型不匹配或容量不足)，跳过
+			continue
+		}
 		if cost < bestCost {
 			bestCost = cost
 			bestVehicle = v
@@ -101,9 +95,12 @@ func doCreateOrderTask(shipment *model.Shipment, wg *sync.WaitGroup) {
 	}
 
 	if bestVehicle == nil {
-		Logger.Logger.Warn("没有选出合适车辆")
+		Logger.Logger.Warn("没有选出合适车辆(所有候选均未通过校验)")
 		return
 	}
+
+	// 收集全局指标并打印到控制台
+	dispatchCtx.CollectAndPrintMetrics(shipment, startPoi, endPoi)
 	// 路径规划（车辆当前位置 -> 起点）
 	routeResp, err := PlanRoute(
 		bestVehicle.Lon,
