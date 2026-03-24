@@ -29,6 +29,8 @@ type VehicleOverview struct {
 type UtilizationMetrics struct {
 	ByVehicleCount float64 // 按车辆数计算的利用率
 	ByCapacity     float64 // 按载重/容量计算的利用率
+	TotalCapacity  int     // 总运能
+	UsedCapacity   int     // 实际已使用运能
 }
 
 // TimeMetrics 时间相关统计量 (通用：总计、最大、最小、平均、中位数、标准差)
@@ -112,6 +114,8 @@ func (s *Statistics) calculateUtilization(vehicles []*model.Vehicle) {
 			usedCap += v.Capacity // 简化模型：运行即满载
 		}
 	}
+	s.UtilizationStats.TotalCapacity = totalCap
+	s.UtilizationStats.UsedCapacity = usedCap
 	s.UtilizationStats.ByVehicleCount = float64(runningCount) / float64(len(vehicles))
 	if totalCap > 0 {
 		s.UtilizationStats.ByCapacity = float64(usedCap) / float64(totalCap)
