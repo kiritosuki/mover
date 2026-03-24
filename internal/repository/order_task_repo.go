@@ -25,6 +25,14 @@ func GetRunningTasks() ([]*model.OrderTask, error) {
 	return tasks, err
 }
 
+// GetAllTasks 查询所有任务（用于统计）
+func GetAllTasks() ([]*model.OrderTask, error) {
+	var tasks []*model.OrderTask
+	db := database.DB.Model(&model.OrderTask{})
+	err := db.Find(&tasks).Error
+	return tasks, err
+}
+
 // UpdateTaskSequential 更新任务进入下一阶段
 func UpdateTaskSequential(id int, status int, oldStatus int) error {
 	// 获取数据库连接对象
@@ -33,4 +41,12 @@ func UpdateTaskSequential(id int, status int, oldStatus int) error {
 	db = db.Where("id = ? and status = ?", id, oldStatus)
 	db = db.Update("status", status)
 	return db.Error
+}
+
+// UpdateTaskStatus 更新任务状态
+func UpdateTaskStatus(id int, status int) error {
+	db := database.DB.Model(&model.OrderTask{})
+	db = db.Where("id = ?", id)
+	err := db.Update("sequential", status).Error
+	return err
 }

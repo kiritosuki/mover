@@ -1,6 +1,7 @@
 package task
 
 import (
+	"math"
 	"strconv"
 	"strings"
 	"sync"
@@ -66,19 +67,37 @@ func doCreateOrderTask(shipment *model.Shipment, wg *sync.WaitGroup) {
 		Logger.Logger.Error("查询终点POI失败")
 		return
 	}
+	_ = endPoi // 暂时占用以避免编译错误
+
+	// 获取货物详情用于校验
+	cargo, err := repository.GetCargo(int(shipment.CargoId))
+	if err != nil {
+		Logger.Logger.Error("查询货物详情失败")
+		return
+	}
 	// 获取所有可用车辆
 	vehicles, err := repository.ListVehicles(constant.VehicleStatusFree)
 	if err != nil || len(vehicles) == 0 {
 		Logger.Logger.Warn("没有可用车辆")
 		return
 	}
-	// 选最优车辆
+
+	// 在分配前，可选地计算全局统计量以供日志记录或监控数据
+	stats, err := CalculateGlobalStats()
+	if err != nil {
+		Logger.Logger.Error("获取全局统计量失败")
+	}
+
+	// 选最优车辆 (目前逻辑：选择第一个符合类型和容量要求的车辆)
 	var bestVehicle *model.Vehicle
-	bestCost := float64(1<<63 - 1)
+	bestCost := math.MaxFloat64
 
 	for _, v := range vehicles {
-
 		// TODO 这里做 cost 计算 替换成真实做法
+		// TODO 这里需要利用上面 stats 里的数据进行成本模型评估
+		// TODO 1. 获取全局平均等待时间 stats.WaitTimeStats.Avg
+		// TODO 2. 获取利用率指标 stats.UtilizationStats 用于平台模式计算
+		// TODO 3. 获取风险标准差 stats.WaitTimeStats.StdDev 用于风险模式计算
 		// TODO 除了 cost 计算 还应当先考虑车剩余容量和车辆类型(普通/危化品) 这里一起计算
 		// TODO 装货卸货的逻辑我有实现 但是这是在车辆到达原材料地之后的逻辑
 		// TODO 也就是这里创建任务是前置逻辑 要在这里完成货物类型和容量的判断 才能保证后续程序正常运行
@@ -90,13 +109,26 @@ func doCreateOrderTask(shipment *model.Shipment, wg *sync.WaitGroup) {
 		// TODO 你可以单独创建新文件在 mover/internal/task/cost.go 中写cost计算的函数
 		// 函数计算需要用到的参数我也不确定有哪些 可能需要先做上周的数据统计部分 计算参数
 		// 这里用参数来计算cost
-		// 建议两个人写 一个人写数据统计部分 一个人写cost计算部分
+		// 建议两个人写 一个人写数据统计部分 一人写cost
 
+		// 校验1: 车辆类型与货物类型匹配
+		if v.Tybe != cargo.Tybe {
+			continue
+		}
+		// 校验2: 车辆容量
+		if v.Capacity < shipment.Count {
+			continue
+		}
+
+		// 暂时移除真实的 Cost 计算，先用 0.0 占位
+		// TODO 调用 CalculateCost(v, shipment, stats, cargo)
 		cost := 0.0
 
 		if cost < bestCost {
 			bestCost = cost
 			bestVehicle = v
+			// 目前逻辑：先选择第一辆符合条件的可用车辆
+			break
 		}
 	}
 
