@@ -6,6 +6,7 @@ import (
 	"github.com/kiritosuki/mover/internal/config"
 	"github.com/kiritosuki/mover/internal/database"
 	"github.com/kiritosuki/mover/internal/router"
+	"github.com/kiritosuki/mover/internal/task"
 	_ "github.com/kiritosuki/mover/swagger-docs"
 	"go.uber.org/zap"
 )
@@ -45,4 +46,10 @@ func main() {
 	}
 
 	Logger.Logger.Info("mover服务启动成功")
+	Logger.Logger.Info("启动任务创建go程...")
+	go task.CreateOrderTask()
+	Logger.Logger.Info("任务启动 done")
+	Logger.Logger.Info("启动模拟车辆移动go程...")
+	go task.SimulateMoving()
+	Logger.Logger.Info("车辆移动 done")
 }

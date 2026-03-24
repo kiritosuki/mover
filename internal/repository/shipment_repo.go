@@ -15,8 +15,29 @@ func GetSleepingShipment() ([]*model.Shipment, error) {
 	// 条件查询
 	db = db.Where("status = ?", constant.ShipmentStatusSleeping)
 	db = db.Order("create_time ASC") // 早的在前
-	db = db.Limit(10)
+	db = db.Limit(constant.ShipmentGetCount)
 	// 写入结果
 	err := db.Find(&shipments).Error
 	return shipments, err
+}
+
+// UpdateShipmentStatus 更新订单状态
+func UpdateShipmentStatus(id int, status int, oldStatus int) error {
+	// 获取数据库连接对象
+	db := database.DB.Model(&model.Shipment{})
+	// CAS锁
+	db = db.Where("id = ? and status = ?", id, oldStatus)
+	db = db.Update("status", status)
+	return db.Error
+}
+
+// GetShipment 根据id查询shipment
+func GetShipment(id int) (*model.Shipment, error) {
+	// 存放返回结果
+	shipment := model.Shipment{}
+	// 获取数据库连接对象
+	db := database.DB.Model(&model.Poi{})
+	// 根据主键查询
+	err := db.First(&shipment, id).Error
+	return &shipment, err
 }

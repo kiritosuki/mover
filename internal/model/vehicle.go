@@ -16,4 +16,7 @@ type Vehicle struct {
 	Speed      float64   `json:"speed"`
 	UpdateTime time.Time `json:"updateTime"`
 	Status     int       `json:"status"`
+	Tybe       int       `json:"tybe"`
+	Size       int       `json:"size"`
+	Capacity   int       `json:"capacity"`
 }

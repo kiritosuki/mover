@@ -1,6 +1,9 @@
 package constant
 
 const (
+	// 模拟车辆移动更新间隔时间
+	VehicleSimulateMovingGap = 10 // 10s执行一次
+
 	// vehicle 的类型
 	VehicleTybeNormal = 1 // 普通
 	VehicleTybeDanger = 2 // 危化品
