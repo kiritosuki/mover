@@ -12,7 +12,9 @@ func ListVehicles(status int) ([]*model.Vehicle, error) {
 	// 获取数据库连接对象
 	db := database.DB.Model(&model.Vehicle{})
 	// 条件查询
-	db = db.Where("status = ?", status)
+	if status != 0 {
+		db = db.Where("status = ?", status)
+	}
 	// 写入结果
 	err := db.Find(&vehicles).Error
 	return vehicles, err

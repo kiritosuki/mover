@@ -72,3 +72,7 @@ $RECYCLE.BIN/
 /build/
 /dist/
 /out/
+
+# 配置文件
+config-prod.yml
+config-dev.yml
