@@ -76,3 +76,4 @@ $RECYCLE.BIN/
 # 配置文件
 config-prod.yml
 config-dev.yml
+.codex/

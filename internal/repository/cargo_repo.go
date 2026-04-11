@@ -13,3 +13,10 @@ func GetCargo(id int) (*model.Cargo, error) {
 	return &cargo, err
 }
 
+// ListCargos 查询全部货物
+func ListCargos() ([]*model.Cargo, error) {
+	var cargos []*model.Cargo
+	db := database.DB.Model(&model.Cargo{})
+	err := db.Find(&cargos).Error
+	return cargos, err
+}

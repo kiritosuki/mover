@@ -95,13 +95,13 @@ func doCreateOrderTask(shipment *model.Shipment, wg *sync.WaitGroup) {
 		if v.Tybe != cargo.Tybe {
 			continue
 		}
-		// 校验2: 车辆容量
-		if v.Capacity < shipment.Count {
+		// 校验2: 车辆容量，按实际货重(kg)做匹配
+		if v.Capacity-v.Size < cargo.Weight*shipment.Count {
 			continue
 		}
 
 		// 调用真实的 Cost 计算
-		cost := CalculateCost(v, shipment, stats, cargo, startPoi)
+		cost := CalculateCost(v, shipment, stats, cargo, startPoi, endPoi)
 
 		if cost < bestCost {
 			bestCost = cost
