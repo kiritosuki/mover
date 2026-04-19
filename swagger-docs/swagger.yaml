@@ -16,15 +16,21 @@ definitions:
     type: object
   model.Vehicle:
     properties:
+      capacity:
+        type: integer
       id:
         type: integer
       lat:
         type: number
       lon:
         type: number
+      size:
+        type: integer
       speed:
         type: number
       status:
+        type: integer
+      tybe:
         type: integer
       updateTime:
         type: string
@@ -138,6 +144,25 @@ paths:
           schema:
             $ref: '#/definitions/result.Result'
       summary: 查询/筛选车辆列表
+      tags:
+      - Vehicle
+  /vehicles/ws:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: vehicle 状态
+        in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "101":
+          description: Switching Protocols to websocket
+          schema:
+            type: string
+      summary: WebSocket查询/筛选车辆列表
       tags:
       - Vehicle
 swagger: "2.0"

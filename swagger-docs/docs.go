@@ -177,6 +177,36 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/vehicles/ws": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vehicle"
+                ],
+                "summary": "WebSocket查询/筛选车辆列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "vehicle 状态",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "101": {
+                        "description": "Switching Protocols to websocket",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -206,6 +236,9 @@ const docTemplate = `{
         "model.Vehicle": {
             "type": "object",
             "properties": {
+                "capacity": {
+                    "type": "integer"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -215,10 +248,16 @@ const docTemplate = `{
                 "lon": {
                     "type": "number"
                 },
+                "size": {
+                    "type": "integer"
+                },
                 "speed": {
                     "type": "number"
                 },
                 "status": {
+                    "type": "integer"
+                },
+                "tybe": {
                     "type": "integer"
                 },
                 "updateTime": {
