@@ -24,7 +24,7 @@ func SetupRouter(r *gin.Engine) {
 	vehicleGroup := r.Group("/vehicles")
 	{
 		vehicleGroup.GET("", handler.ListVehicles)
-		//vehicleGroup.GET("/ws", handler.WsListVehicles)
+		vehicleGroup.GET("/ws", handler.WsListVehicles)
 	}
 
 	// swagger接口
