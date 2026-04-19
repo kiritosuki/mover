@@ -41,3 +41,11 @@ func GetShipment(id int) (*model.Shipment, error) {
 	err := db.First(&shipment, id).Error
 	return &shipment, err
 }
+
+// ListShipments 查询全部订单
+func ListShipments() ([]*model.Shipment, error) {
+	var shipments []*model.Shipment
+	db := database.DB.Model(&model.Shipment{})
+	err := db.Find(&shipments).Error
+	return shipments, err
+}

@@ -39,3 +39,11 @@ func GetPoi(id int) (*model.Poi, error) {
 	err := db.First(&poi, id).Error
 	return &poi, err
 }
+
+// ListAllPois 查询全部 POI
+func ListAllPois() ([]*model.Poi, error) {
+	var pois []*model.Poi
+	db := database.DB.Model(&model.Poi{})
+	err := db.Find(&pois).Error
+	return pois, err
+}
